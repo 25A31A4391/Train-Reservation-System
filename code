@@ -1,0 +1,134 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class Passenger {
+public:
+    int seatNumber;
+    string name;
+    Passenger* next;
+    Passenger(int seat, string passengerName) {
+        seatNumber = seat;
+        name = passengerName;
+        next = NULL;
+    }
+};
+class TrainReservationSystem {
+private:
+    Passenger* head;
+public:
+    TrainReservationSystem() {
+        head = NULL;
+    }
+    void bookTicket(int seat, string name) {
+        Passenger* newPassenger = new Passenger(seat, name);
+        if(head == NULL) {
+            head = newPassenger;
+        }
+        else {
+            Passenger* temp = head;
+            while(temp->next != NULL) {
+                temp = temp->next;
+            }
+            temp->next = newPassenger;
+        }
+        cout << "Ticket Booked Successfully!\n";
+    }
+    void cancelTicket(int seat) {
+        if(head == NULL) {
+            cout << "No Reservations Found!\n";
+            return;
+        }
+        Passenger* temp = head;
+        Passenger* prev = NULL;
+        while(temp != NULL && temp->seatNumber != seat) {
+            prev = temp;
+            temp = temp->next;
+        }
+        if(temp == NULL) {
+            cout << "Seat Not Found!\n";
+            return;
+        }
+        if(prev == NULL) {
+            head = head->next;
+        }
+        else {
+            prev->next = temp->next;
+        }
+        delete temp;
+        cout << "Ticket Cancelled Successfully!\n";
+    }
+    void searchPassenger(int seat) {
+        Passenger* temp = head;
+        while(temp != NULL) {
+            if(temp->seatNumber == seat) {
+                cout << "Passenger Found!\n";
+                cout << "Seat Number: " << temp->seatNumber << endl;
+                cout << "Passenger Name: " << temp->name << endl;
+                return;
+            }
+            temp = temp->next;
+        }
+        cout << "Passenger Not Found!\n";
+    }
+    void displayReservations() {
+        if(head == NULL) {
+            cout << "No Reservations Available!\n";
+            return;
+        }
+        Passenger* temp = head;
+        cout << "\n===== RESERVED TICKETS =====\n";
+        while(temp != NULL) {
+            cout << "Seat Number: " << temp->seatNumber
+                 << " | Passenger Name: " << temp->name << endl;
+            temp = temp->next;
+        }
+    }
+    void menu() {
+        int choice;
+        int seat;
+        string name;
+        do {
+            cout << "\n===== TRAIN RESERVATION SYSTEM =====\n";
+            cout << "1. Book Ticket\n";
+            cout << "2. Cancel Ticket\n";
+            cout << "3. Search Passenger\n";
+            cout << "4. Display Reservations\n";
+            cout << "5. Exit\n";
+            cout << "Enter Your Choice: ";
+            cin >> choice;
+            switch(choice) {
+                case 1:
+                    cout << "Enter Seat Number: ";
+                    cin >> seat;
+                    cin.ignore();
+                    cout << "Enter Passenger Name: ";
+                    getline(cin, name);
+                    bookTicket(seat, name);
+                    break;
+                case 2:
+                    cout << "Enter Seat Number to Cancel: ";
+                    cin >> seat;
+                    cancelTicket(seat);
+                    break;
+                case 3:
+                    cout << "Enter Seat Number to Search: ";
+                    cin >> seat;
+                    searchPassenger(seat);
+                    break;
+                case 4:
+                    displayReservations();
+                    break;
+                case 5:
+                    cout << "Exiting System...\n";
+                    break;
+                default:
+                    cout << "Invalid Choice!\n";
+            }
+        } while(choice != 5);
+    }
+};
+int main() {
+    TrainReservationSystem system;
+    system.menu();
+    return 0;
+}
